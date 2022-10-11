@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
 
-// const { getTopics } = require("./controllers/topics_controllers");
+const { getTopics } = require("./controllers/topics_controllers");
 const { getArticleById } = require("./controllers/articles_controllers");
 const { getUsers } = require("./controllers/users_controllers");
+
 const {
   handlePSQLErrors,
   handleCustomErrors,
@@ -12,7 +13,7 @@ const {
 
 app.use(express.json());
 
-// app.get("/api/topics", getTopics);
+app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/users", getUsers);
 
