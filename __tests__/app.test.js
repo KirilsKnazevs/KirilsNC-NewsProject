@@ -5,7 +5,6 @@ const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const { expect } = require("@jest/globals");
 
-
 beforeEach(() => {
   return seed(testData);
 });
@@ -88,7 +87,7 @@ describe("2. 04-GET /api/articles/:article_id", () => {
   });
 });
 
-describe.only("3. 05-GET /api/users", () => {
+describe("3. 05-GET /api/users", () => {
   test("status:200, responds with an array of test users objects", () => {
     return request(app)
       .get("/api/users")
@@ -131,6 +130,67 @@ describe.only("3. 05-GET /api/users", () => {
             username: "lurker",
           },
         ]);
+      });
+  });
+});
+
+describe("4. 06-PATCH /api/articles/:article_id", () => {
+  test("status 200, responds with the updated article", () => {
+    const ARTICLE_ID = 1;
+    return request(app)
+      .patch(`/api/articles/${ARTICLE_ID}`)
+      .send({ inc_votes: -50 })
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 50,
+        });
+      });
+  });
+  test("status 400, responds with an error message when passed invalid id", () => {
+    const ARTICLE_ID = "Pizza";
+    return request(app)
+      .patch(`/api/articles/${ARTICLE_ID}`)
+      .send({ inc_votes: -50 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid id");
+      });
+  });
+  test("status 400, responds with an error message when passed invalid input", () => {
+    const ARTICLE_ID = 1;
+    return request(app)
+      .patch(`/api/articles/${ARTICLE_ID}`)
+      .send({ inc_votes: "Pizza" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status 400, responds with an error message when passed invalid input", () => {
+    const ARTICLE_ID = 1;
+    return request(app)
+      .patch(`/api/articles/${ARTICLE_ID}`)
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing required fields");
+      });
+  });
+  test("status 404, responds with an error message when passed invalid input", () => {
+    const ARTICLE_ID = 1337;
+    return request(app)
+      .patch(`/api/articles/${ARTICLE_ID}`)
+      .send({ inc_votes: -50 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Id not found");
       });
   });
 });
