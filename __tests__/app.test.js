@@ -3,6 +3,8 @@ const app = require("../../KirilsNC-NewsProject/app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const { expect } = require("@jest/globals");
+
 
 beforeEach(() => {
   return seed(testData);
@@ -82,6 +84,53 @@ describe("2. 04-GET /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Id not found");
+      });
+  });
+});
+
+describe.only("3. 05-GET /api/users", () => {
+  test("status:200, responds with an array of test users objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.usersList).toBeInstanceOf(Array);
+        expect(body.usersList).toHaveLength(4);
+        body.usersList.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+        expect(body.usersList).toEqual([
+          {
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+            name: "jonny",
+            username: "butter_bridge",
+          },
+          {
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+            name: "sam",
+            username: "icellusedkars",
+          },
+          {
+            avatar_url:
+              "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+            name: "paul",
+            username: "rogersop",
+          },
+          {
+            avatar_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            name: "do_nothing",
+            username: "lurker",
+          },
+        ]);
       });
   });
 });
