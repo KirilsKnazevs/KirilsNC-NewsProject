@@ -197,8 +197,8 @@ describe("4. 06-PATCH /api/articles/:article_id", () => {
   });
 });
 
-describe("5. 07-GET /api/articles/:article_id", () => {
-  test("status:200, responds with an article object by it's id with comment_count colum", () => {
+describe("5. 07-GET_comment_count /api/articles/:article_id", () => {
+  test("status:200, responds with an article object by it's id with comment_count column", () => {
     const ARTICLE_ID = 1;
     return request(app)
       .get(`/api/articles/${ARTICLE_ID}`)
@@ -216,6 +216,70 @@ describe("5. 07-GET /api/articles/:article_id", () => {
             comment_count: "11",
           })
         );
+      });
+  });
+});
+
+describe("6. 08-GET_articles /api/articles", () => {
+  test("status:200, responds with an array of test articles objects", () => {
+    return request(app)
+      .get(`/api/articles`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articlesList).toBeInstanceOf(Array);
+        expect(body.articlesList).toHaveLength(12);
+        body.articlesList.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("status:200, responds with an array of test articles objects filtered by 'cats' topic", () => {
+    return request(app)
+      .get(`/api/articles?topic=cats`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articlesList).toBeInstanceOf(Array);
+        body.articlesList.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "cats",
+            })
+          );
+        });
+      });
+  });
+  test("status:200, responds with an array of test articles objects filtered by 'mitch' topics", () => {
+    return request(app)
+      .get(`/api/articles?topic=mitch`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articlesList).toBeInstanceOf(Array);
+        body.articlesList.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "mitch",
+            })
+          );
+        });
+      });
+  });
+  test("status:400, responds with an error message when filtered by invalit topic", () => {
+    return request(app)
+      .get(`/api/articles?topic=pizza`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid topic value");
       });
   });
 });

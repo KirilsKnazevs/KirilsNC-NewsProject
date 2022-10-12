@@ -1,5 +1,32 @@
 const db = require("../db/connection");
 
+exports.selectArticles = (topic) => {
+  const validTopicValues = ["mitch", "cats", undefined];
+  if (!validTopicValues.includes(topic)) {
+    return Promise.reject({ status: 400, msg: "Invalid topic value" });
+  }
+
+  let baseSQLStart = `SELECT articles.*, COUNT(articles.article_id) AS comment_count
+FROM articles
+LEFT JOIN comments ON comments.article_id = articles.article_id
+`;
+
+  let baseSQLMiddle = ` `;
+  if (topic !== undefined) {
+    baseSQLMiddle += `WHERE topic = '${topic}'`;
+  }
+
+  let baseSQLEnd = `GROUP BY articles.article_id
+  ORDER BY created_at DESC;`;
+
+  let fullSQL = baseSQLStart + baseSQLMiddle + baseSQLEnd;
+
+  return db.query(fullSQL).then((result) => {
+    const articles = result.rows;
+    return articles;
+  });
+};
+
 exports.selectArticleById = (id) => {
   return db
     .query(
