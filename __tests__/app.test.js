@@ -308,12 +308,20 @@ describe("6. 09-GET_api_articles_article.id_comments /api/articles/:article_id/c
         });
       });
   });
-  test("status:400, responds with an error message if given article has no comments", () => {
+  test("status:200, responds with a message if given article has no comments", () => {
     return request(app)
       .get(`/api/articles/2/comments`)
-      .expect(400)
+      .expect(200)
       .then(({ body }) => {
         expect(body.msg).toBe("This article has no comments");
+      });
+  });
+  test("status 400, responds with an error message when passed an invalid id", () => {
+    return request(app)
+      .get(`/api/articles/pizza/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid id");
       });
   });
 });

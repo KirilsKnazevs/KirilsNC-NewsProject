@@ -3,7 +3,6 @@ const db = require("../db/connection");
 exports.selectCommentsByArticleId = (id) => {
   return db
     .query(
-      // GROUP BY created_at ASC;`,
       `SELECT comments.*
     FROM comments
     JOIN articles ON articles.article_id = comments.article_id
@@ -15,7 +14,7 @@ exports.selectCommentsByArticleId = (id) => {
       const commentsByArtilceId = result.rows;
       if (commentsByArtilceId.length === 0) {
         return Promise.reject({
-          status: 400,
+          status: 200,
           msg: "This article has no comments",
         });
       }
