@@ -3,6 +3,8 @@ function handlePSQLErrors(err, req, res, next) {
     res.status(400).send({ msg: "Invalid id" });
   } else if (err.code === "23502") {
     res.status(400).send({ msg: "Missing required fields" });
+  } else if (err.code === "23503") {
+    res.status(404).send({ msg: "Not Found" });
   } else {
     next(err);
   }
