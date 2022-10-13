@@ -286,7 +286,7 @@ describe("6. 08-GET_articles /api/articles", () => {
   });
 });
 
-describe("7. 09-GET_api_articles_article.id_comments /api/articles/:article_id/comments", () => {
+describe("7. 09-GET /api/articles/:article_id/comments Returns all comments from given article_id", () => {
   test("status:200, responds with an array of test comments for given article_id objects", () => {
     return request(app)
       .get(`/api/articles/9/comments`)
@@ -326,8 +326,8 @@ describe("7. 09-GET_api_articles_article.id_comments /api/articles/:article_id/c
   });
 });
 
-describe("8. 10-POST_api_articles_article.id_comments /api/articles/:article_id/comments", () => {
-  test("status:201, responds with an array of new comments for given test article_id objects", () => {
+describe("8. 10-POST /api/articles/:article_id/comments Returns posted comment on given article_id", () => {
+  test("status:201, responds with new comments for given test article_id objects", () => {
     const newComment = {
       username: "butter_bridge",
       body: "I love pizza",
@@ -342,11 +342,11 @@ describe("8. 10-POST_api_articles_article.id_comments /api/articles/:article_id/
         body.comment.forEach((testcomment) => {
           expect(testcomment).toEqual(
             expect.objectContaining({
-              comment_id: expect.any(Number),
-              body: expect.any(String),
-              article_id: expect.any(Number),
-              author: expect.any(String),
-              votes: expect.any(Number),
+              comment_id: 19,
+              body: "I love pizza",
+              article_id: 2,
+              author: "butter_bridge",
+              votes: 0,
               created_at: expect.any(String),
             })
           );
@@ -366,7 +366,7 @@ describe("8. 10-POST_api_articles_article.id_comments /api/articles/:article_id/
         expect(body.msg).toBe("Not Found");
       });
   });
-  test("status:404, responds with an error message when passed invalid id", () => {
+  test("status:404, responds with an error message when passed valid id that doesn't exist", () => {
     const newComment = {
       username: "butter_bridge",
       body: "I love pizza",
@@ -382,7 +382,7 @@ describe("8. 10-POST_api_articles_article.id_comments /api/articles/:article_id/
   test("status:400, responds with an error message when passed invalid input in body", () => {
     const newComment = {
       username: "butter_bridge",
-      body: 1337,
+      body: 1234,
     };
     return request(app)
       .post(`/api/articles/2/comments`)
@@ -400,6 +400,16 @@ describe("8. 10-POST_api_articles_article.id_comments /api/articles/:article_id/
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Missing required fields");
+      });
+  });
+  test("status:400, responds with an error message when passed an invalid id", () => {
+    const newComment = {};
+    return request(app)
+      .post(`/api/articles/pizza/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid id");
       });
   });
 });
