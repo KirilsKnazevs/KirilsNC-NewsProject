@@ -21,3 +21,20 @@ exports.selectCommentsByArticleId = (id) => {
       return commentsByArtilceId;
     });
 };
+
+exports.insertCommentsByArticleId = (newComment, id) => {
+  const { username, body } = newComment;
+  if (newComment.body && typeof newComment.body !== "string") {
+    return Promise.reject({ status: 400, msg: "Invalid input" });
+  }
+  return db
+    .query(
+      `INSERT INTO comments (author, body, article_id) VALUES($1, $2, $3)
+  RETURNING*;`,
+      [username, body, id]
+    )
+    .then((result) => {
+      const newComments = result.rows;
+      return newComments;
+    });
+};

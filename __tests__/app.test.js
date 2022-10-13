@@ -50,7 +50,7 @@ describe("1. 03-GET /api/topics", () => {
 });
 
 describe("2. 04-GET /api/articles/:article_id", () => {
-  test("status:200, responds with an article object by it's id", () => {
+  test("status:200, responds with a test article object by it's id", () => {
     const ARTICLE_ID = 2;
     return request(app)
       .get(`/api/articles/${ARTICLE_ID}`)
@@ -90,7 +90,7 @@ describe("2. 04-GET /api/articles/:article_id", () => {
 });
 
 describe("3. 05-GET /api/users", () => {
-  test("status:200, responds with an array of test users objects", () => {
+  test("status:200, responds with an array of a test users objects", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
@@ -198,7 +198,7 @@ describe("4. 06-PATCH /api/articles/:article_id", () => {
 });
 
 describe("5. 07-GET_comment_count /api/articles/:article_id", () => {
-  test("status:200, responds with an article object by it's id with comment_count column", () => {
+  test("status:200, responds with a test article object by it's id with comment_count column", () => {
     const ARTICLE_ID = 1;
     return request(app)
       .get(`/api/articles/${ARTICLE_ID}`)
@@ -286,7 +286,7 @@ describe("6. 08-GET_articles /api/articles", () => {
   });
 });
 
-describe("6. 09-GET_api_articles_article.id_comments /api/articles/:article_id/comments", () => {
+describe("7. 09-GET_api_articles_article.id_comments /api/articles/:article_id/comments", () => {
   test("status:200, responds with an array of test comments for given article_id objects", () => {
     return request(app)
       .get(`/api/articles/9/comments`)
@@ -322,6 +322,84 @@ describe("6. 09-GET_api_articles_article.id_comments /api/articles/:article_id/c
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid id");
+      });
+  });
+});
+
+describe("8. 10-POST_api_articles_article.id_comments /api/articles/:article_id/comments", () => {
+  test("status:201, responds with an array of new comments for given test article_id objects", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love pizza",
+    };
+    return request(app)
+      .post(`/api/articles/2/comments`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toBeInstanceOf(Array);
+        expect(body.comment).toHaveLength(1);
+        body.comment.forEach((testcomment) => {
+          expect(testcomment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("status:404, responds with an error message when passed invalid username", () => {
+    const newComment = {
+      username: "PizzaLover",
+      body: "I love pizza",
+    };
+    return request(app)
+      .post(`/api/articles/2/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("status:404, responds with an error message when passed invalid id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love pizza",
+    };
+    return request(app)
+      .post(`/api/articles/1337/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("status:400, responds with an error message when passed invalid input in body", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: 1337,
+    };
+    return request(app)
+      .post(`/api/articles/2/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("status:400, responds with an error message when passed an empty object", () => {
+    const newComment = {};
+    return request(app)
+      .post(`/api/articles/2/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing required fields");
       });
   });
 });
