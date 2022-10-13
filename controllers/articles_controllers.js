@@ -1,8 +1,20 @@
 const db = require("../db/connection");
 const {
+  selectArticles,
   selectArticleById,
   updateArticleById,
 } = require("../models/articles_models");
+
+exports.getArticles = (req, res, next) => {
+  const {
+    query: { topic },
+  } = req;
+  selectArticles(topic)
+    .then((articlesList) => {
+      res.status(200).send({ articlesList });
+    })
+    .catch(next);
+};
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
