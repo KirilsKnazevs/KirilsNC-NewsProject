@@ -285,3 +285,35 @@ describe("6. 08-GET_articles /api/articles", () => {
       });
   });
 });
+
+describe.only("6. 09-GET_api_articles_article.id_comments /api/articles/:article_id/comments", () => {
+  test("status:200, responds with an array of test comments for given article_id objects", () => {
+    return request(app)
+      .get(`/api/articles/9/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.commentsList).toBeInstanceOf(Array);
+        expect(body.commentsList).toHaveLength(2);
+        body.commentsList.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("status:400, responds with an error message if given article has no comments", () => {
+    return request(app)
+      .get(`/api/articles/2/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("This article has no comments");
+      });
+  });
+});
