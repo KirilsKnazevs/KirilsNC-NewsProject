@@ -250,6 +250,7 @@ describe("6. 08-GET_articles /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articlesList).toBeInstanceOf(Array);
+        expect(body.articlesList).toHaveLength(1);
         body.articlesList.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -265,6 +266,7 @@ describe("6. 08-GET_articles /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articlesList).toBeInstanceOf(Array);
+        expect(body.articlesList).toHaveLength(11);
         body.articlesList.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -274,7 +276,7 @@ describe("6. 08-GET_articles /api/articles", () => {
         });
       });
   });
-  test("status:400, responds with an error message when filtered by invalit topic", () => {
+  test("status:400, responds with an error message when filtered by invalid topic", () => {
     return request(app)
       .get(`/api/articles?topic=pizza`)
       .expect(400)
