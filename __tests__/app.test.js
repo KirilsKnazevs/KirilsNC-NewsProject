@@ -403,7 +403,10 @@ describe("8. 10-POST /api/articles/:article_id/comments Returns posted comment o
       });
   });
   test("status:400, responds with an error message when passed an invalid id", () => {
-    const newComment = {};
+    const newComment = {
+      username: "butter_bridge",
+      body: "I love pizza",
+    };
     return request(app)
       .post(`/api/articles/pizza/comments`)
       .send(newComment)
