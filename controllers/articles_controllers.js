@@ -7,9 +7,9 @@ const {
 
 exports.getArticles = (req, res, next) => {
   const {
-    query: { topic },
+    query: { sort_by, order, topic },
   } = req;
-  selectArticles(topic)
+  selectArticles(sort_by, order, topic)
     .then((articlesList) => {
       res.status(200).send({ articlesList });
     })

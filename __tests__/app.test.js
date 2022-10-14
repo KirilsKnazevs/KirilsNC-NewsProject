@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const { expect } = require("@jest/globals");
+const toBeSortedBy = require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -413,6 +414,58 @@ describe("8. 10-POST /api/articles/:article_id/comments Returns posted comment o
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid id");
+      });
+  });
+});
+
+describe.only("9. 11-GET /api/articles(queries) Returns an array of test articles objects with sort_by and order queries", () => {
+  test("status:200, responds with an array of aricles objects sorted by query value: title", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=title`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articlesList).toBeInstanceOf(Array);
+        expect(body.articlesList).toHaveLength(12);
+        expect(body.articlesList).toBeSortedBy("title", {
+          coerce: true,
+        });
+      });
+  });
+  test("status:200, respond with an array of articles objects ordered by order value: default=created_at", () => {
+    return request(app)
+      .get(`/api/articles`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articlesList).toBeSortedBy("created_at", {
+          coerce: true,
+        });
+      });
+  });
+  test("status:400, responds with an error message when sort by query is invalid", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=pizza`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort_by value");
+      });
+  });
+  test("status:200, respond with an array of articles objects ordered by order value: comment_count asc", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=comment_count&order=asc`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articlesList).toBeSortedBy("comment_count", {
+          ascending: true,
+          coerce: true,
+        });
+      });
+  });
+  test("status:400, respond with an error message when order query is invalid", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=comment_count&order=pizza`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order value");
       });
   });
 });
