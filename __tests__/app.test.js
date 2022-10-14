@@ -487,4 +487,12 @@ describe("10. 12-DELETE /api/comments/:comment_id deletes comment on given comme
         expect(body.msg).toEqual("Invalid id");
       });
   });
+  test("status: 404, responds with an error message when passed a valid id but comment object is empty", () => {
+    return request(app)
+      .delete("/api/comments/1337")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment not found");
+      });
+  });
 });
