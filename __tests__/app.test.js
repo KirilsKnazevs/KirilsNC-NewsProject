@@ -418,7 +418,7 @@ describe("8. 10-POST /api/articles/:article_id/comments Returns posted comment o
   });
 });
 
-describe.only("9. 11-GET /api/articles(queries) Returns an array of test articles objects with sort_by and order queries", () => {
+describe("9. 11-GET /api/articles(queries) Returns an array of test articles objects with sort_by and order queries", () => {
   test("status:200, responds with an array of aricles objects sorted by query value: title", () => {
     return request(app)
       .get(`/api/articles?sort_by=title`)
