@@ -469,3 +469,22 @@ describe("9. 11-GET /api/articles(queries) Returns an array of test articles obj
       });
   });
 });
+
+describe("10. DELETE /api/comments/:comment_id deletes comment on given comment id and returns an empty object", () => {
+  test("status: 204, respond with an empty object when successfully deleted", () => {
+    return request(app)
+      .delete("/api/comments/2")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("status: 400, responds with an error message when passed an invalid id", () => {
+    return request(app)
+      .delete("/api/comments/pizza")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid id");
+      });
+  });
+});

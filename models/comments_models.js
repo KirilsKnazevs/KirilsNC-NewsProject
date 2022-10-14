@@ -1,3 +1,4 @@
+const { deleteCommentById } = require("../controllers/comments_controllers");
 const db = require("../db/connection");
 
 exports.selectCommentsByArticleId = (id) => {
@@ -36,5 +37,13 @@ exports.insertCommentsByArticleId = (newComment, id) => {
     .then((result) => {
       const newComments = result.rows;
       return newComments;
+    });
+};
+
+exports.removeCommentById = (id) => {
+  return db
+    .query(`DELETE FROM comments WHERE comment_id=$1;`, [id])
+    .then((result) => {
+      return console.log("No content");
     });
 };
