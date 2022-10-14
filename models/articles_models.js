@@ -1,12 +1,36 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (topic) => {
-  const validTopicValues = ["mitch", "cats", undefined];
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
+  const validSortByValues = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  const validOrderValues = ["asc", "desc"];
+  const validTopicValues = [
+    "mitch",
+    "cats",
+    "coding",
+    "football",
+    "cooking",
+    undefined,
+  ];
+  if (!validSortByValues.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Invalid sort_by value" });
+  }
+  if (!validOrderValues.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order value" });
+  }
   if (!validTopicValues.includes(topic)) {
     return Promise.reject({ status: 400, msg: "Invalid topic value" });
   }
 
-  let baseSQLStart = `SELECT articles.*, COUNT(articles.article_id) AS comment_count
+  let baseSQLStart = `SELECT articles.*, COUNT(comments.article_id) AS comment_count
 FROM articles
 LEFT JOIN comments ON comments.article_id = articles.article_id
 `;
@@ -17,7 +41,7 @@ LEFT JOIN comments ON comments.article_id = articles.article_id
   }
 
   let baseSQLEnd = `GROUP BY articles.article_id
-  ORDER BY created_at DESC;`;
+  ORDER BY ${sort_by} ${order};`;
 
   let fullSQL = baseSQLStart + baseSQLMiddle + baseSQLEnd;
 
