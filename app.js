@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 
+const { getHomePage } = require("./controllers/home.page_controllers");
 const { getTopics } = require("./controllers/topics_controllers");
 const {
   getArticles,
@@ -21,6 +22,8 @@ const {
 } = require("./controllers/error_controllers.js");
 
 app.use(express.json());
+
+app.get("/api", getHomePage);
 
 app.get("/api/topics", getTopics);
 
