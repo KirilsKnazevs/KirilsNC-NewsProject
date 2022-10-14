@@ -470,7 +470,7 @@ describe("9. 11-GET /api/articles(queries) Returns an array of test articles obj
   });
 });
 
-describe("10. DELETE /api/comments/:comment_id deletes comment on given comment id and returns an empty object", () => {
+describe("10. 12-DELETE /api/comments/:comment_id deletes comment on given comment id and returns an empty object", () => {
   test("status: 204, respond with an empty object when successfully deleted", () => {
     return request(app)
       .delete("/api/comments/2")
