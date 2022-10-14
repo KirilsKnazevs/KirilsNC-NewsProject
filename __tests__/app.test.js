@@ -419,14 +419,14 @@ describe("8. 10-POST /api/articles/:article_id/comments Returns posted comment o
 });
 
 describe("9. 11-GET /api/articles(queries) Returns an array of test articles objects with sort_by and order queries", () => {
-  test("status:200, responds with an array of aricles objects sorted by query value: title", () => {
+  test("status:200, responds with an array of aricles objects sorted by query value: article_id", () => {
     return request(app)
-      .get(`/api/articles?sort_by=title`)
+      .get(`/api/articles?sort_by=article_id&order=asc`)
       .expect(200)
       .then(({ body }) => {
         expect(body.articlesList).toBeInstanceOf(Array);
         expect(body.articlesList).toHaveLength(12);
-        expect(body.articlesList).toBeSortedBy("title", {
+        expect(body.articlesList).toBeSortedBy("article_id", {
           coerce: true,
         });
       });
