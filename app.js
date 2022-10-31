@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const { getHomePage } = require("./controllers/home.page_controllers");
 const { getTopics } = require("./controllers/topics_controllers");
@@ -20,6 +21,8 @@ const {
   handleCustomErrors,
   handleInternalErrors,
 } = require("./controllers/error_controllers.js");
+
+app.use(cors());
 
 app.use(express.json());
 

@@ -26,7 +26,9 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an object of given article id",
-    "queries": [1],
+    "queries": {
+      "article_id": "Any number (datatype integer)"
+    },
     "exampleResponse": {
       "article": {
         "article_id": 1,
